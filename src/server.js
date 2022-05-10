@@ -15,5 +15,5 @@ app.use(express.json())
 app.get("/", (req, res) => {
     res.json({ msg: "Hello World!" })
 })
-
-app.listen(5000, () => console.log("Server is running on port 5000!"))
+const port = 5000
+app.listen(port, () => console.log("Server is running on port 5000!"))

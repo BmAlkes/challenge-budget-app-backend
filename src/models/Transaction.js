@@ -19,7 +19,7 @@ const TransactionSchema = mongoose.Schema(
             required: true,
         },
         created_by: {
-            created_by: mongoose.Types.ObjectId,
+            type: mongoose.Types.ObjectId,
             ref: "UserModel",
         },
     },

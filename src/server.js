@@ -31,5 +31,24 @@ app.post("/transactions", async (req, res) => {
         res.status(500).send(err.message)
     }
 })
+
+app.delete("/transactions/:id", async (req, res) => {
+    try {
+        const transactionsId = req.params.id
+        const transactionToDelete = await TransactionModel.findById(
+            transactionsId
+        )
+
+        if (!transactionToDelete) {
+            return res.status(500).send("Not found")
+        }
+        const deleteTransaction = await TransactionModel.findByIdAndDelete(
+            transactionsId
+        )
+        res.status(200).send(deleteTransaction)
+    } catch (err) {
+        res.status(500).send(err.message)
+    }
+})
 const port = 5000
 app.listen(port, () => console.log("Server is running on port 5000!"))

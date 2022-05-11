@@ -44,6 +44,28 @@ app.post("/transactions", async (req, res) => {
     }
 })
 
+app.patch("/transactions/:id", async (req, res) => {
+    try {
+        const transaction = req.params.id
+        const transactionData = req.body
+
+        const transactionToUpdate = await TransactionModel.findById(transaction)
+
+        const allowedToUpdate = ["title", "amount", "category", "type"]
+        const requestUpdates = Object.keys(transactionData)
+
+        for (update of requestUpdates) {
+            if (allowedToUpdate.includes(update)) {
+                transactionToUpdate[update] = req.body[update]
+            }
+        }
+        await transactionToUpdate.save()
+        return res.status(200).send(transactionToUpdate)
+    } catch (err) {
+        res.status(500).send(err.message)
+    }
+})
+
 app.delete("/transactions/:id", async (req, res) => {
     try {
         const transactionsId = req.params.id

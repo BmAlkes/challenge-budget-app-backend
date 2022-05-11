@@ -21,6 +21,18 @@ app.get("/transactions", async (req, res) => {
     }
 })
 
+app.get("/transactions/:id", async (req, res) => {
+    try {
+        const transaction = await TransactionModel.findById(req.params.id)
+        if (!transaction) {
+            return res.status(404).send("transaction not found")
+        }
+        res.status(200).send(transaction)
+    } catch (err) {
+        res.status(500).send(err.message)
+    }
+})
+
 app.post("/transactions", async (req, res) => {
     try {
         const newTransaction = req.body
@@ -40,7 +52,7 @@ app.delete("/transactions/:id", async (req, res) => {
         )
 
         if (!transactionToDelete) {
-            return res.status(500).send("Not found")
+            return res.status(404).send("Not found")
         }
         const deleteTransaction = await TransactionModel.findByIdAndDelete(
             transactionsId

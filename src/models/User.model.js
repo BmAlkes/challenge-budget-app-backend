@@ -5,7 +5,7 @@ const UserSchema = mongoose.Schema({
         type: String,
         required: true,
     },
-    name: {
+    email: {
         type: String,
         required: true,
     },
@@ -13,6 +13,7 @@ const UserSchema = mongoose.Schema({
         type: String,
         required: true,
     },
+    isAdmin: Boolean,
 })
 
 const UserModel = new mongoose.model("User", UserSchema)

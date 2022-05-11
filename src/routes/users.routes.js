@@ -16,13 +16,7 @@ router.get("/user/:id", checkToken, async (req, res) => {
     if (!user) {
         return res.status(404).send({ message: "User not found" })
     }
-    try {
-        const secret = process.env.SECRET
-        jwt.verify(token, secret)
-        next()
-    } catch (err) {
-        res.status(404).send({ message: "Token Invalid" })
-    }
+    res.status(200).send({ user })
 })
 
 // regiter user
@@ -75,7 +69,7 @@ router.post("/auth/login", async (req, res) => {
         const secret = process.env.SECRET
 
         const token = jwt.sign({ id: userExist._id }, secret, {
-            expiresIn: "2h",
+            expiresIn: "24h",
         })
 
         res.status(200).send({

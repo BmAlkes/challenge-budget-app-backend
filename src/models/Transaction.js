@@ -1,5 +1,5 @@
 const mongoose = require("mongoose")
-
+const UserModel = require("./User.model")
 const TransactionSchema = mongoose.Schema(
     {
         title: {
@@ -18,10 +18,12 @@ const TransactionSchema = mongoose.Schema(
             type: String,
             required: true,
         },
-        created_by: {
-            type: mongoose.Types.ObjectId,
-            ref: "UserModel",
-        },
+        created_by: [
+            {
+                type: mongoose.Schema.Types.ObjectId,
+                ref: "User",
+            },
+        ],
     },
     {
         timestamps: true,

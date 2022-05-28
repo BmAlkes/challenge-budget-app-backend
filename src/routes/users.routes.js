@@ -1,11 +1,26 @@
 const express = require("express")
 const router = express.Router()
 const UserModel = require("../models/User.model")
+const passport = require("passport")
 const bcryptjs = require("bcryptjs")
 const jwt = require("jsonwebtoken")
 const checkToken = require("../middlewares/isAuthenticated")
 
+const ClientUrl = "htpp://localhost:3000"
+
 // Private Router
+
+router.get(
+    "auth/facebook",
+    passport.authenticate("facebook", { scope: ["profile"] })
+)
+router.get(
+    "auth/facebook/callback",
+    passport.authenticate("facebook", {
+        successRedirect: ClientUrl,
+        failureRedirect: "/login",
+    })
+)
 
 router.get("/user/:id", checkToken, async (req, res) => {
     try {
@@ -40,7 +55,7 @@ router.post("/auth/register", async (req, res) => {
     const user = new UserModel({ name, email, password: passwordHash })
     try {
         await user.save()
-        res.status(200).send({ msg: "User Created" })
+        res.status(200).send({ msg: "User Created", user })
     } catch (e) {
         console.log(e)
         return res.status(500).send(e.message)

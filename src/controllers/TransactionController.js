@@ -6,7 +6,7 @@ class TransactionController {
     }
     async getTransaction() {
         try {
-            const transactions = await TransactionModel.find({})
+            const transactions = await TransactionModel.find()
             this.res.status(200).send(transactions)
         } catch (err) {
             this.res.status(500).send(err.message)

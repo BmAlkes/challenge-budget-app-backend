@@ -3,7 +3,7 @@ const router = express.Router()
 const TransactionController = require("../controllers/TransactionController")
 const checkToken = require("../middlewares/isAuthenticated")
 
-router.get("/transactions", async (req, res) => {
+router.get("/transactions", checkToken, async (req, res) => {
     return new TransactionController(req, res).getTransaction()
 })
 

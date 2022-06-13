@@ -6,7 +6,9 @@ class TransactionController {
     }
     async getTransaction() {
         try {
-            const transactions = await TransactionModel.find()
+            const { id } = this.req.user
+
+            const transactions = await TransactionModel.find({ created_by: id })
             this.res.status(200).send(transactions)
         } catch (err) {
             this.res.status(500).send(err.message)

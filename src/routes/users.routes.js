@@ -4,8 +4,7 @@ const UserModel = require("../models/User.model")
 const bcryptjs = require("bcryptjs")
 const jwt = require("jsonwebtoken")
 const checkToken = require("../middlewares/isAuthenticated")
-
-const ClientUrl = "htpp://localhost:3000"
+const { Joi, celebrate, erros, Segments } = require("celebrate")
 
 // Private Router
 
@@ -26,28 +25,41 @@ router.get("/user/:id", checkToken, async (req, res) => {
 })
 
 // regiter user
-router.post("/auth/register", async (req, res) => {
-    const { name, email, password } = req.body
+router.post(
+    "/auth/register",
+    celebrate({
+        [Segments.BODY]: Joi.object().keys({
+            name: Joi.string().required(),
+            age: Joi.number().integer(),
+            role: Joi.string().default("admin"),
+        }),
+        [Segments.QUERY]: {
+            token: Joi.string().token().required(),
+        },
+    }),
+    async (req, res) => {
+        const { name, email, password } = req.body
 
-    //validation
-    const userExist = await UserModel.findOne({ email })
+        //validation
+        const userExist = await UserModel.findOne({ email })
 
-    if (userExist) {
-        return res.status(422).send({ msg: "User already exists" })
+        if (userExist) {
+            return res.status(422).send({ msg: "User already exists" })
+        }
+        // create passaword
+        const salt = await bcryptjs.genSalt(10)
+        const passwordHash = await bcryptjs.hash(password, salt)
+
+        const user = new UserModel({ name, email, password: passwordHash })
+        try {
+            await user.save()
+            res.status(200).send({ msg: "User Created", user })
+        } catch (e) {
+            console.log(e)
+            return res.status(500).send(e.message)
+        }
     }
-    // create passaword
-    const salt = await bcryptjs.genSalt(10)
-    const passwordHash = await bcryptjs.hash(password, salt)
-
-    const user = new UserModel({ name, email, password: passwordHash })
-    try {
-        await user.save()
-        res.status(200).send({ msg: "User Created", user })
-    } catch (e) {
-        console.log(e)
-        return res.status(500).send(e.message)
-    }
-})
+)
 
 router.post("/auth/login", async (req, res) => {
     const { email, password } = req.body

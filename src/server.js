@@ -10,9 +10,9 @@ const conectToDataBase = require("./database/mongoose.database")
 
 dotenv.config()
 const app = express()
+app.use(express.json())
 app.use(cors())
 app.use(cookieSession())
-app.use(express.json())
 
 conectToDataBase()
 

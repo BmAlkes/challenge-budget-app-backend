@@ -5,23 +5,12 @@ const bcryptjs = require("bcryptjs")
 const jwt = require("jsonwebtoken")
 const checkToken = require("../middlewares/isAuthenticated")
 const { Joi, celebrate, erros, Segments } = require("celebrate")
+const UserController = require("../controllers/AuthController")
 
 // Private Router
 
 router.get("/user/:id", checkToken, async (req, res) => {
-    try {
-        const id = req.params.id
-        //check if user exists
-
-        const user = await UserModel.findById(id, "-password")
-
-        if (!user) {
-            return res.status(404).send({ message: "User not found" })
-        }
-        res.status(200).send({ user })
-    } catch (e) {
-        console.log({ message: e.message })
-    }
+    return new UserController(req, res).userId()
 })
 
 // regiter user
@@ -38,26 +27,7 @@ router.post(
         },
     }),
     async (req, res) => {
-        const { name, email, password } = req.body
-
-        //validation
-        const userExist = await UserModel.findOne({ email })
-
-        if (userExist) {
-            return res.status(422).send({ msg: "User already exists" })
-        }
-        // create passaword
-        const salt = await bcryptjs.genSalt(10)
-        const passwordHash = await bcryptjs.hash(password, salt)
-
-        const user = new UserModel({ name, email, password: passwordHash })
-        try {
-            await user.save()
-            res.status(200).send({ msg: "User Created", user })
-        } catch (e) {
-            console.log(e)
-            return res.status(500).send(e.message)
-        }
+        return new UserController(req, res).authRegister()
     }
 )
 

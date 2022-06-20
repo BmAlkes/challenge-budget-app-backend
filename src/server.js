@@ -19,5 +19,5 @@ conectToDataBase()
 app.use("/", TransactionRouter)
 app.use("/", UserRouter)
 
-const port = 5000
+const port = process.env.PORT || 5000
 app.listen(port, () => console.log("Server is running on port 5000!"))

@@ -10,7 +10,19 @@ const UserController = require("../controllers/AuthController")
 // Private Router
 
 router.get("/user/:id", checkToken, async (req, res) => {
-    return new UserController(req, res).userId()
+    try {
+        const id = req.params.id
+        //check if user exists
+
+        const user = await UserModel.findById(id, "-password")
+
+        if (!user) {
+            return res.status(404).send({ message: "User not found" })
+        }
+        res.status(200).send({ user })
+    } catch (e) {
+        console.log({ message: e.message })
+    }
 })
 
 // regiter user
@@ -27,7 +39,26 @@ router.post(
         },
     }),
     async (req, res) => {
-        return new UserController(req, res).authRegister()
+        const { name, email, password } = this.req.body
+
+        //validation
+        const userExist = await UserModel.findOne({ email })
+
+        if (userExist) {
+            return this.res.status(422).send({ msg: "User already exists" })
+        }
+        // create passaword
+        const salt = await bcryptjs.genSalt(10)
+        const passwordHash = await bcryptjs.hash(password, salt)
+
+        const user = new UserModel({ name, email, password: passwordHash })
+        try {
+            await user.save()
+            this.res.status(200).send({ msg: "User Created", user })
+        } catch (e) {
+            console.log(e)
+            return this.res.status(500).send(e.message)
+        }
     }
 )
 

@@ -28,16 +28,16 @@ router.get("/user/:id", checkToken, async (req, res) => {
 // regiter user
 router.post(
     "/auth/register",
-    celebrate({
-        [Segments.BODY]: Joi.object().keys({
-            name: Joi.string().required(),
-            age: Joi.number().integer(),
-            role: Joi.string().default("admin"),
-        }),
-        [Segments.QUERY]: {
-            token: Joi.string().token().required(),
-        },
-    }),
+    // celebrate({
+    //     [Segments.BODY]: Joi.object().keys({
+    //         name: Joi.string().required(),
+    //         age: Joi.number().integer(),
+    //         role: Joi.string().default("admin"),
+    //     }),
+    //     [Segments.QUERY]: {
+    //         token: Joi.string().token().required(),
+    //     },
+    // }),
     async (req, res) => {
         const { name, email, password } = this.req.body
 
